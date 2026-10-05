@@ -1,0 +1,37 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+model/*.joblib
+model/*.csv
+model/*.json
+data/*.csv
+
+# Local backups
+backend_before_production/
+backend/*_backup.py
+backend/main_before_100stocks.py
+frontend/*_backup.*
+
+# Local backtest backups
+*_backup.py
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Logs and temporary files
+*.log
+*.tmp
+.cache/
+
+# Old model version
+model/v1/
+
+# Superseded backtest results
+model/v2/backtests/aapl_backtest.csv
+model/v2/backtests/aapl_summary.json
+
+# Deprecated backtest implementation
+backtest.py

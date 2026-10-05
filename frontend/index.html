@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>StockSense — Market Model</title>
+
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+        <div class="header-inner">
+
+            <a class="brand" href="/">
+                StockSense
+            </a>
+
+            <div class="model-label">
+                <span>Random Forest V2</span>
+                <small>Market research model</small>
+            </div>
+
+        </div>
+    </header>
+
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-copy">
+
+                <p class="eyebrow">
+                    MARKET DIRECTION MODEL
+                </p>
+
+                <h1>
+		Quantitative market analysis, powered by historical data.
+                </h1>
+
+                <p class="hero-description">
+                    StockSense analyzes recent price, volume,
+                    momentum, volatility, and market-relative
+                    features to estimate the next trading day's
+                    direction.
+                </p>
+
+                <form id="ticker-form" class="ticker-form">
+
+                    <input
+                        id="ticker-input"
+                        type="text"
+			placeholder="Search ticker or company, e.g. AAPL or Apple"
+			maxlength="50"
+                        autocomplete="off"
+                        required
+                    >
+		    <div
+    			id="search-suggestions"
+    			class="search-suggestions"
+    hidden
+		></div>
+
+
+                    <button type="submit">
+                        Analyze
+                    </button>
+
+                </form>
+
+                <p id="error-message" class="error-message"></p>
+
+            </div>
+
+        </section>
+
+
+        <!-- EMPTY STATE -->
+
+        <section id="empty-state" class="empty-state">
+
+            <p>
+                Enter a ticker above to run the model.
+            </p>
+
+        </section>
+
+
+        <!-- RESULTS -->
+
+        <section id="results" class="results hidden">
+
+
+            <!-- STOCK HEADER -->
+
+            <div class="stock-heading">
+
+                <div>
+                    <p class="section-label">
+                        CURRENT ANALYSIS
+                    </p>
+
+                    <h2 id="ticker-symbol">
+                        AAPL
+                    </h2>
+
+                    <p id="as-of" class="muted">
+                        Data through —
+                    </p>
+                </div>
+
+
+                <div class="price-block">
+
+                    <span class="price-label">
+                        Latest close
+                    </span>
+
+                    <strong id="latest-close">
+                        —
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- PRIMARY RESULT -->
+
+            <div class="primary-grid">
+
+                <article class="card prediction-card">
+
+                    <p class="card-label">
+                        MODEL ESTIMATE
+                    </p>
+
+                    <div class="prediction-main">
+
+                        <span
+                            id="direction"
+                            class="direction"
+                        >
+                            —
+                        </span>
+
+                        <div>
+                            <strong id="model-probability">
+                                —
+                            </strong>
+
+                            <span class="probability-caption">
+                                model probability
+                            </span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="signal-row">
+
+                        <span>
+                            Signal strength
+                        </span>
+
+                        <strong id="signal-strength">
+                            —
+                        </strong>
+
+                    </div>
+
+
+                    <div class="probability-section">
+
+                        <div class="probability-labels">
+
+                            <span>
+                                DOWN
+                                <strong id="down-probability">
+                                    —
+                                </strong>
+                            </span>
+
+                            <span>
+                                UP
+                                <strong id="up-probability">
+                                    —
+                                </strong>
+                            </span>
+
+                        </div>
+
+                        <div class="probability-track">
+                            <div
+                                id="probability-fill"
+                                class="probability-fill"
+                            ></div>
+                        </div>
+
+                    </div>
+
+
+                    <p class="prediction-note">
+                        This is a model estimate, not a recommendation
+                        to buy or sell.
+                    </p>
+
+                </article>
+
+
+                <article class="card model-card">
+
+                    <p class="card-label">
+                        MODEL
+                    </p>
+
+                    <div class="model-stat">
+                        <span>Algorithm</span>
+                        <strong id="model-name">
+                            Random Forest
+                        </strong>
+                    </div>
+
+                    <div class="model-stat">
+                        <span>Version</span>
+                        <strong id="model-version">
+                            V2
+                        </strong>
+                    </div>
+
+                    <div class="model-stat">
+                        <span>Features</span>
+                        <strong id="feature-count">
+                            28
+                        </strong>
+                    </div>
+
+                    <div class="model-stat">
+                        <span>Training universe</span>
+                        <strong id="training-tickers">
+                            30 stocks
+                        </strong>
+                    </div>
+
+                    <div class="model-stat">
+                        <span>Training data begins</span>
+                        <strong id="training-start">
+                            2015
+                        </strong>
+                    </div>
+
+                </article>
+
+            </div>
+
+
+            <!-- PRICE CHART -->
+
+            <article class="card chart-card">
+
+                <div class="card-heading">
+
+                    <div>
+                        <p class="card-label">
+                            PRICE HISTORY
+                        </p>
+
+                        <h3>
+                            Last 60 trading sessions
+                        </h3>
+                    </div>
+
+                    <span id="chart-range" class="chart-range">
+                        —
+                    </span>
+
+                </div>
+
+                <div class="chart-wrapper">
+
+                    <svg
+                        id="price-chart"
+                        viewBox="0 0 900 300"
+                        preserveAspectRatio="none"
+                    ></svg>
+
+                </div>
+
+            </article>
+
+
+            <!-- VALIDATION -->
+
+            <section class="section-block">
+
+                <div class="section-heading">
+
+                    <div>
+                        <p class="section-label">
+                            OUT-OF-SAMPLE VALIDATION
+                        </p>
+
+                        <h2>
+                            How the model performed on unseen data
+                        </h2>
+                    </div>
+
+                    <p>
+                        Expanding-window testing retrains the model
+                        using only information available before each
+                        test year.
+                    </p>
+
+                </div>
+
+
+                <div class="validation-summary">
+
+                    <article class="metric-card">
+
+                        <span>
+                            Average accuracy
+                        </span>
+
+                        <strong id="validation-accuracy">
+                            —
+                        </strong>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <span>
+                            Average ROC-AUC
+                        </span>
+
+                        <strong id="validation-auc">
+                            —
+                        </strong>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <span>
+                            Average F1
+                        </span>
+
+                        <strong id="validation-f1">
+                            —
+                        </strong>
+
+                    </article>
+
+                </div>
+
+
+                <div class="card validation-table-card">
+
+                    <table>
+
+                        <thead>
+                            <tr>
+                                <th>Test year</th>
+                                <th>Accuracy</th>
+                                <th>ROC-AUC</th>
+                                <th>F1</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="validation-table">
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <p class="research-note">
+                    Results near 50% accuracy and 0.50 ROC-AUC
+                    indicate that this feature set has not
+                    demonstrated a meaningful out-of-sample
+                    directional advantage.
+                </p>
+
+            </section>
+
+
+            <!-- FEATURE IMPORTANCE -->
+
+            <section class="section-block">
+
+                <div class="section-heading">
+
+                    <div>
+                        <p class="section-label">
+                            MODEL INTERPRETATION
+                        </p>
+
+                        <h2>
+                            What influenced the model
+                        </h2>
+                    </div>
+
+                    <p>
+                        Random Forest feature importance measures
+                        how much each input contributed to decisions
+                        across the fitted trees.
+                    </p>
+
+                </div>
+
+
+                <article class="card">
+
+                    <div id="feature-importance">
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- AAPL BACKTEST -->
+
+            <section
+                id="backtest-section"
+                class="section-block hidden"
+            >
+
+                <div class="section-heading">
+
+                    <div>
+                        <p class="section-label">
+                            AAPL WALK-FORWARD BACKTEST
+                        </p>
+
+                        <h2>
+                            Strategy vs. buy and hold
+                        </h2>
+                    </div>
+
+                    <p>
+                        A historical out-of-sample simulation using
+                        a 55% UP-probability threshold.
+                    </p>
+
+                </div>
+
+
+                <div class="backtest-grid">
+
+                    <article class="metric-card">
+
+                        <span>
+                            Strategy return
+                        </span>
+
+                        <strong id="strategy-return">
+                            —
+                        </strong>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <span>
+                            Buy & hold return
+                        </span>
+
+                        <strong id="buy-hold-return">
+                            —
+                        </strong>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <span>
+                            Strategy exposure
+                        </span>
+
+                        <strong id="strategy-exposure">
+                            —
+                        </strong>
+
+                    </article>
+
+
+                    <article class="metric-card">
+
+                        <span>
+                            Signal hit rate
+                        </span>
+
+                        <strong id="signal-hit-rate">
+                            —
+                        </strong>
+
+                    </article>
+
+                </div>
+
+
+                <article class="card chart-card">
+
+                    <div class="card-heading">
+
+                        <div>
+                            <p class="card-label">
+                                $10,000 HYPOTHETICAL START
+                            </p>
+
+                            <h3>
+                                Portfolio value
+                            </h3>
+                        </div>
+
+                        <div class="chart-legend">
+                            <span>Strategy</span>
+                            <span>Buy & hold</span>
+                        </div>
+
+                    </div>
+
+
+                    <div class="chart-wrapper">
+
+                        <svg
+                            id="backtest-chart"
+                            viewBox="0 0 900 300"
+                            preserveAspectRatio="none"
+                        ></svg>
+
+                    </div>
+
+                </article>
+
+
+                <p class="research-note">
+                    The strategy substantially reduced market
+                    exposure, but did not outperform simply holding
+                    AAPL during this test period.
+                </p>
+
+            </section>
+
+
+            <!-- METHODOLOGY -->
+
+            <section class="section-block methodology">
+
+                <div class="section-heading">
+
+                    <div>
+                        <p class="section-label">
+                            METHODOLOGY
+                        </p>
+			 How StockSense is built
+                        <h2>
+
+                        </h2>
+                    </div>
+
+                </div>
+
+
+                <div class="method-grid">
+
+                    <article>
+                        <span>01</span>
+                        <h3>Market data</h3>
+                        <p>
+                            Daily OHLCV history across a selected
+                            universe of 30 liquid U.S. stocks,
+                            with SPY used for market-relative
+                            features.
+                        </p>
+                    </article>
+
+
+                    <article>
+                        <span>02</span>
+                        <h3>Feature engineering</h3>
+                        <p>
+                            28 inputs covering returns, moving
+                            averages, volatility, volume, RSI,
+                            MACD, gaps, and relative performance.
+                        </p>
+                    </article>
+
+
+                    <article>
+                        <span>03</span>
+                        <h3>Model comparison</h3>
+                        <p>
+                            Logistic Regression, Random Forest,
+                            and Histogram Gradient Boosting were
+                            compared using chronological data.
+                        </p>
+                    </article>
+
+
+                    <article>
+                        <span>04</span>
+                        <h3>Walk-forward testing</h3>
+                        <p>
+                            Each test period is evaluated only
+                            after training on earlier observations
+                            to better approximate unseen data.
+                        </p>
+                    </article>
+
+                </div>
+
+            </section>
+
+
+            <div class="disclaimer-box">
+    		<strong>StockSense</strong>
+   		 <p id="disclaimer">
+        	Quantitative market research platform built with Python,
+        	scikit-learn, FastAPI, and historical market data.
+       	 	For research and educational purposes only. Not financial advice.
+   	 </p>
+	</div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <span>
+            StockSense
+        </span>
+
+        <span>
+            Python · scikit-learn · FastAPI
+        </span>
+
+    </footer>
+
+
+    <script src="/static/app.js"></script>
+
+</body>
+</html>

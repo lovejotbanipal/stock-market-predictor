@@ -1,0 +1,44 @@
+{
+  "ticker": "AAPL",
+  "start": "2024-01-02",
+  "end": "2026-10-01",
+  "threshold": 0.55,
+  "observations": 690,
+  "signal_days": 118,
+  "exposure": 0.17101449275362318,
+  "hit_rate": 0.5084745762711864,
+  "strategy_final_value": 10353.299716941325,
+  "buy_hold_final_value": 17975.11331278392,
+  "strategy_return": 0.035329971694132434,
+  "buy_hold_return": 0.7975113312783921,
+  "strategy_sharpe": 0.15950474747586843,
+  "buy_hold_sharpe": 0.9148417537271187,
+  "strategy_max_drawdown": -0.16973954723888296,
+  "buy_hold_max_drawdown": -0.3343370956600398,
+  "yearly": [
+    {
+      "year": 2024,
+      "strategy_return": -0.07814297506577605,
+      "buy_hold_return": 0.3135639242903021,
+      "signal_days": 42,
+      "exposure": 0.16666666666666666,
+      "hit_rate": 0.4523809523809524
+    },
+    {
+      "year": 2025,
+      "strategy_return": 0.10523893150420438,
+      "buy_hold_return": 0.1113799589185982,
+      "signal_days": 48,
+      "exposure": 0.192,
+      "hit_rate": 0.5208333333333334
+    },
+    {
+      "year": 2026,
+      "strategy_return": 0.016152857319283065,
+      "buy_hold_return": 0.23128294312814335,
+      "signal_days": 28,
+      "exposure": 0.14893617021276595,
+      "hit_rate": 0.5714285714285714
+    }
+  ]
+}
